@@ -5,13 +5,13 @@ i18n.add({
   title: ['霓虹歸位', 'NEON SORT'],
   titleEn: ['NEON SORT', 'NEON SORT'],
   kicker: ['NEON KOWLOON · DATA SORT', 'NEON KOWLOON · DATA SORT'],
-  tagline: ['拖曳歸位 · 堆疊消除 · 通勤解謎', 'Drag to sort · stack-clear · commute puzzle'],
+  tagline: ['點管拎起 · 堆疊消除 · 通勤解謎', 'Tap pipes · stack-clear · commute puzzle'],
   play: ['開始解謎', 'PLAY'],
   playS: ['STAGE 1', 'STAGE 1'],
   endless: ['無盡歸位', 'ENDLESS SORT'],
   endlessS: ['GENERATED', 'GENERATED'],
   stages: ['揀關卡', 'STAGES'],
-  stagesS: ['1–8', '1–8'],
+  stagesS: ['1–12', '1–12'],
   best: ['最佳分數', 'BEST'],
   score: ['分數', 'SCORE'],
   'hud.score': ['分數', 'SCORE'],
@@ -39,12 +39,13 @@ i18n.add({
   muteTip: ['靜音', 'Mute'],
   pauseTip: ['暫停', 'Pause'],
   stars: ['星星', 'STARS'],
+  trialLock: ['試玩已鎖 · 解鎖銀級繼續', 'Trial locked — unlock Silver'],
   'help.rules': [
-    '點擊一條管道拎起頂部同色磚，再點另一條放到（空管或頂部同色）。滿 4 粒同色就清除。每關有 1 次撤銷。',
-    'Tap a pipe to lift its top matching bricks, then tap another pipe (empty or same top colour). A full stack of 4 clears. One undo per board.'
+    '點一條管道拎起頂部連續同色磚（會浮起），再點另一條放落去：目標要係空管，或者頂部顏色一樣。湊滿 4 粒同色就消除並計 combo。每關有 1 次撤銷；重來會重置呢關。過關按剩餘步數評 ★。無盡模式會一直出新盤（顏色／管數有上限）。',
+    'Tap a pipe to lift its top matching run (bricks float), then tap another pipe: empty or same top colour. A full stack of 4 clears with combo score. One undo per board; Restart resets the board. Stars by move count. Endless keeps generating boards with soft caps.'
   ],
   'help.controls': [
-    '手機／滑鼠：點擊管道。Z／U 撤銷 · R 重來 · P 暫停 · M 靜音。',
-    'Touch/mouse: tap pipes. Z/U undo · R restart · P pause · M mute.'
+    '手機／滑鼠：點擊管道（綠色光環＝可以放）。撤銷掣／Z／U · 重來掣／R · P 暫停 · M 靜音。',
+    'Touch/mouse: tap pipes (green ring = valid drop). Undo button / Z / U · Restart / R · P pause · M mute.'
   ],
 });

@@ -2,7 +2,7 @@
 
 > 賽博朋克分類／堆疊／方塊混合休閒解謎 · cyberpunk sort / stack / block hybrid-casual · Three.js · 手機優先
 
-**試玩 Play:** https://fung2222.github.io/neon-sort/ · **狀態 Status:** v0.1 playable slice（cyber-kit menu-home）
+**試玩 Play:** https://fung2222.github.io/neon-sort/ · **狀態 Status:** v0.2 polish（cyber-kit menu-home）
 
 ## 一句 pitch
 將混亂嘅霓虹數據磚拖去正確管道堆疊歸位，連消有爽感，關卡同無盡模式都啱通勤。Drag chaotic neon data-bricks into the right pipes to stack-clear — satisfying combos for short commute sessions.

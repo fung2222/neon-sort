@@ -69,9 +69,7 @@ export class Board {
 
   move(from, to) {
     if (!this.canMove(from, to)) {
-      // invalid — shake, keep or clear selection
-      this.selected = -1;
-      this.liftCount = 0;
+      // keep lift so player can try another pipe
       return { ok: false, reason: 'illegal' };
     }
     const { color, count } = this.topRun(from);

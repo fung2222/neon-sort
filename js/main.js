@@ -1,8 +1,8 @@
-// NEON SORT — v0.1 sort/stack hybrid slice
+// NEON SORT — v0.2 sort/stack hybrid
 import * as THREE from 'three';
 import {
   i18n, t, flags, createStore, createStage, ThemeController, NeonCity, CyberUI, Platform,
-  createAds, returnToHub as kitReturnToHub, shouldShowArcadeMenu,
+  createAds, readHub, returnToHub as kitReturnToHub, shouldShowArcadeMenu, Particles,
 } from 'cyber-kit';
 import { GAME_ID, ADS, TRIAL, BOARDS } from './config.js';
 import './strings.js';
@@ -11,19 +11,10 @@ import { View } from './view.js';
 import { SortAudio } from './audio.js';
 
 const $ = (id) => document.getElementById(id);
-const Q = new URLSearchParams(location.search);
-const ENT = (() => { try { return JSON.parse(localStorage.getItem('cyber.entitlement') || 'null'); } catch { return null; } })();
-const HUB = {
-  on: Q.get('hub') === '1',
-  tier: Q.get('tier') || ENT?.tier || 'free',
-  ads: Q.get('ads'),
-  trial: Q.get('trial') === '1',
-  trialLeft: Q.get('trialLeft'),
-  ret: Q.get('ret'),
-};
-if (HUB.on && HUB.ads == null && ENT?.tier) HUB.ads = ENT.tier === 'free' ? '1' : '0';
-const ADS_ON = HUB.ads === '1' || (!HUB.on && (flags.adsim || Platform.isNative));
-const AD_FLAGS = { adsim: flags.adsim || HUB.ads === '1', debug: flags.debug };
+const HUB = readHub(location.search);
+// normalize ads for createAds / interstitial gate (kit readHub.ads is boolean)
+const ADS_ON = HUB.ads === true || HUB.ads === '1' || (!HUB.fromHub && (flags.adsim || Platform.isNative));
+const AD_FLAGS = { adsim: flags.adsim || HUB.ads === true || HUB.ads === '1', debug: flags.debug };
 
 const store = createStore(GAME_ID);
 if (flags.reset) store.clear();
@@ -43,6 +34,8 @@ void city;
 
 const view = new View(stage);
 view.setVisible(false);
+const particles = new Particles(stage.scene, 900, { floorY: -0.02 });
+stage.onResize((w, h, pr) => particles.resize(h, pr));
 const audio = new SortAudio(store);
 ui.setMuted(audio.muted);
 const ads = createAds({ gameId: GAME_ID, ...ADS, flags: AD_FLAGS, onAdOpen: (on) => audio.duckAll(on) });
@@ -99,8 +92,15 @@ function buildStageGrid() {
     if (lock) b.classList.add('locked');
     const st = starsMap()[i] || 0;
     b.innerHTML = `<b>${i}</b><small>${'★'.repeat(st)}${'☆'.repeat(3 - st)}</small>`;
+    if (trialLocked(i)) b.title = t('trialLock');
     b.addEventListener('click', () => {
-      if (lock) return;
+      if (lock) {
+        if (trialLocked(i)) {
+          const note = $('start-trial');
+          if (note) { note.classList.remove('hidden'); note.textContent = t('trialLock'); }
+        }
+        return;
+      }
       startStage(i);
     });
     grid.appendChild(b);
@@ -170,6 +170,9 @@ function winBoard() {
   $('hud').classList.add('hidden');
   ui.show('over');
   audio.win();
+  view.celebrate?.();
+  for (let i = 0; i < stars; i++) setTimeout(() => audio.star(), 120 + i * 140);
+  particles.burst(new THREE.Vector3(0, 1.8, 0), new THREE.Color(0xffe600), 40, { speed: 5, up: 4 });
   if (ADS_ON) ads.naturalBreak('clear').catch(() => {});
 }
 
@@ -178,7 +181,10 @@ function onPipe(i) {
   const before = S.board.selected;
   const r = S.board.select(i);
   if (!r.ok) {
-    if (r.reason === 'illegal') { audio.deny(); view.shake(i); }
+    if (r.reason === 'illegal' || r.reason === 'empty') {
+      audio.deny();
+      view.flashIllegal?.(i) || view.shake(i);
+    }
     view.sync(S.board);
     return;
   }
@@ -187,7 +193,11 @@ function onPipe(i) {
   else if (r.moved) {
     audio.drop();
     for (const ev of r.events || []) {
-      if (ev.type === 'clear') audio.clear(1);
+      if (ev.type === 'clear') {
+        audio.clear(ev.n || 1);
+        particles.burst(new THREE.Vector3(view.pipes[ev.pipe]?.group.position.x || 0, 1.5, 0), new THREE.Color(0x3bff8a), 20, { speed: 4, up: 3 });
+      }
+      if (ev.type === 'combo') audio.clear(Math.min(3, ev.n));
       if (ev.type === 'win') winBoard();
     }
   }
@@ -197,13 +207,28 @@ function onPipe(i) {
 }
 
 // pointer pick
-$('scene').addEventListener('pointerdown', (e) => {
-  if (S.state !== 'play') return;
-  if (e.target.closest?.('button')) return;
-  audio.init();
-  const i = view.pickPipe(e.clientX, e.clientY);
-  onPipe(i);
-});
+// Mobile-friendly tap: pointerup with small movement threshold
+(function bindPipeTap() {
+  let down = null;
+  const el = $('scene');
+  el.style.touchAction = 'none';
+  el.addEventListener('pointerdown', (e) => {
+    if (S.state !== 'play') return;
+    if (e.target.closest?.('button, .neon-btn, .hud-actions')) return;
+    down = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    audio.init();
+  });
+  el.addEventListener('pointerup', (e) => {
+    if (!down || e.pointerId !== down.id) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    down = null;
+    if (Math.hypot(dx, dy) > 24) return; // drag cancel
+    const i = view.pickPipe(e.clientX, e.clientY);
+    onPipe(i);
+  });
+  el.addEventListener('pointercancel', () => { down = null; });
+})();
 
 $('btn-play')?.addEventListener('click', () => startStage(1));
 $('btn-endless')?.addEventListener('click', () => { S.totalScore = 0; startStage(1, { endless: true }); });
@@ -225,7 +250,9 @@ $('btn-next')?.addEventListener('click', () => {
 $('btn-menu')?.addEventListener('click', () => showMenu());
 $('btn-mute')?.addEventListener('click', () => { audio.toggleMute(); ui.setMuted(audio.muted); });
 $('btn-undo')?.addEventListener('click', () => {
-  if (S.board?.undo()) { audio.undo(); view.sync(S.board); updateHUD(); }
+  if (!S.board) return;
+  if (S.board.undo()) { audio.undo(); view.sync(S.board); updateHUD(); }
+  else audio.deny();
 });
 $('btn-restart-hud')?.addEventListener('click', () => {
   if (S.board) { S.board.restart(); view.build(S.board); updateHUD(); audio.click(); }
@@ -322,6 +349,7 @@ function tick(dt) {
     view.frameCamera(stage.camera, S.board.stacks.length, dt, false);
   }
   if (S.state === 'play') demoAI(dt);
+  if (S.state === 'play' || S.state === 'over' || S.state === 'pause') particles.update(dt);
 }
 
 async function boot() {

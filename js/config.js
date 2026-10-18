@@ -8,7 +8,7 @@ export const ADS = {
   units: { android: {} },
 };
 
-export const STACK_MAX = 4; // clear when N same colour stacked in a pipe
+export const STACK_MAX = 4;
 export const COLORS = [
   { id: 0, hex: 0x00e5ff, zh: '青', en: 'CYAN' },
   { id: 1, hex: 0xff2bd6, zh: '粉', en: 'MAGENTA' },
@@ -18,25 +18,21 @@ export const COLORS = [
   { id: 5, hex: 0xb388ff, zh: '紫', en: 'VIOLET' },
 ];
 
-/** Each board: array of pipes; each pipe is bottom→top colour ids. Empty pipes = []. */
+/** Colour counts always multiple of STACK_MAX; ≥1 empty buffer pipe. */
 export const BOARDS = [
-  // Each colour count must be a multiple of STACK_MAX (4). Last pipe(s) act as buffers.
-  // 1 tutorial — 3 pipes, 2 colours
   { id: 1, pipes: 3, stacks: [[0, 0, 0, 1], [1, 1, 1, 0], []] },
-  // 2
   { id: 2, pipes: 3, stacks: [[0, 1, 0, 1], [1, 0, 1, 0], []] },
-  // 3 — 3 colours
   { id: 3, pipes: 4, stacks: [[0, 0, 1, 2], [1, 1, 2, 0], [2, 2, 0, 1], []] },
-  // 4
   { id: 4, pipes: 4, stacks: [[0, 1, 2, 0], [1, 2, 0, 1], [2, 0, 1, 2], []] },
-  // 5
   { id: 5, pipes: 4, stacks: [[0, 0, 1, 1], [2, 2, 2, 0], [1, 1, 0, 2], []] },
-  // 6 — 4 colours
   { id: 6, pipes: 5, stacks: [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2], []] },
-  // 7
   { id: 7, pipes: 5, stacks: [[0, 1, 0, 2], [1, 2, 3, 1], [2, 3, 0, 3], [3, 0, 1, 2], []] },
-  // 8 — 5 colours, one empty buffer
   { id: 8, pipes: 6, stacks: [[0, 4, 1, 0], [1, 2, 4, 3], [2, 3, 0, 1], [3, 1, 2, 4], [4, 0, 3, 2], []] },
+  // 9–12 new
+  { id: 9, pipes: 5, stacks: [[0, 0, 2, 1], [1, 1, 0, 3], [2, 2, 3, 0], [3, 3, 1, 2], []] },
+  { id: 10, pipes: 5, stacks: [[0, 3, 1, 2], [1, 0, 2, 3], [2, 1, 3, 0], [3, 2, 0, 1], []] },
+  { id: 11, pipes: 6, stacks: [[0, 1, 4, 2], [1, 2, 0, 3], [2, 3, 1, 4], [3, 4, 2, 0], [4, 0, 3, 1], []] },
+  { id: 12, pipes: 6, stacks: [[0, 4, 1, 2], [1, 0, 3, 4], [2, 1, 0, 3], [3, 2, 4, 0], [4, 3, 2, 1], []] },
 ];
 
 export function mulberry32(a) {
@@ -48,34 +44,29 @@ export function mulberry32(a) {
   };
 }
 
-/** Endless: generate a solvable-ish board with capped colour/pipe counts */
+/** Endless: always leave one empty buffer; cap colours/pipes for playability */
 export function genEndless(seed, depth = 0) {
   const rng = mulberry32(seed >>> 0);
-  const nCol = Math.min(6, 3 + Math.floor(Math.min(3, depth / 4)));
-  const nPipes = Math.min(5, nCol + 1);
+  const nCol = Math.min(6, 3 + Math.floor(Math.min(3, depth / 3)));
+  const nPipes = Math.min(6, nCol + 1); // +1 buffer
   const stacks = Array.from({ length: nPipes }, () => []);
-  // fill nCol full tubes worth, then shuffle into pipes leaving ≥1 empty slot total
   const bag = [];
   for (let c = 0; c < nCol; c++) for (let i = 0; i < STACK_MAX; i++) bag.push(c);
-  // Fisher-Yates
   for (let i = bag.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
     [bag[i], bag[j]] = [bag[j], bag[i]];
   }
+  const fillSlots = nPipes - 1; // last pipe stays empty buffer
   let pi = 0;
   for (const c of bag) {
-    // leave last pipe emptier
-    while (stacks[pi].length >= STACK_MAX - (pi === nPipes - 1 ? STACK_MAX : 0) || (pi === nPipes - 1 && stacks[pi].length >= 0 && rng() < 0.5)) {
-      pi = (pi + 1) % (nPipes - 1); // never fill last as full dump — keep empty buffer
-      if (stacks.slice(0, -1).every((s) => s.length >= STACK_MAX)) break;
-    }
-    if (pi >= nPipes - 1) pi = 0;
+    let guard = 0;
+    while (stacks[pi].length >= STACK_MAX && guard++ < fillSlots * 2) pi = (pi + 1) % fillSlots;
     if (stacks[pi].length < STACK_MAX) stacks[pi].push(c);
     else {
-      const open = stacks.findIndex((s, idx) => idx < nPipes - 1 && s.length < STACK_MAX);
+      const open = stacks.findIndex((s, idx) => idx < fillSlots && s.length < STACK_MAX);
       if (open >= 0) stacks[open].push(c);
     }
-    pi = (pi + 1) % (nPipes - 1);
+    pi = (pi + 1) % fillSlots;
   }
   return { id: 1000 + depth, pipes: nPipes, stacks, endless: true, depth };
 }

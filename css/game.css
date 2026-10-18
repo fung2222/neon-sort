@@ -30,3 +30,12 @@ html, body { margin: 0; height: 100%; background: #05010f; overflow: hidden; tou
 .stage-btn small { color: #ffe600; letter-spacing: 1px; }
 .stage-btn.locked { opacity: 0.35; cursor: not-allowed; }
 .stage-btn:not(.locked):hover { border-color: #ff2bd6; }
+.stage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.hud-actions .neon-btn:disabled { opacity: 0.35; filter: grayscale(0.4); }
+.hint-toast {
+  position: fixed; left: 50%; top: 18%; transform: translateX(-50%);
+  z-index: 30; padding: 8px 14px; border-radius: 999px;
+  background: #0a0520ee; border: 1px solid #ff2bd688; color: #ffd6f5;
+  font-size: 13px; pointer-events: none; opacity: 0; transition: opacity .2s;
+}
+.hint-toast.show { opacity: 1; }
