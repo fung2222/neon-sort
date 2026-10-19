@@ -20,8 +20,8 @@ Paste into `fung2222/cyber-arcade/games.json` **after Roy confirms** slug + tier
   },
   "status": "wip",
   "stage": {
-    "zh": "網頁版 v0.1 playable slice · 未包裝 Android",
-    "en": "web v0.1 playable slice · not packaged for Android"
+    "zh": "網頁版 v0.2 polish · 12 關 + 無盡 · 待 Roy 試玩 · 未包裝 Android",
+    "en": "web v0.2 polish · 12 stages + endless · awaiting Roy · not packaged for Android"
   },
   "kit": "v0.3.16",
   "play": "not-submitted",
