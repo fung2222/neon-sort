@@ -5,7 +5,7 @@ import {
   createAds, readHub, returnToHub as kitReturnToHub, shouldShowArcadeMenu, Particles,
 } from 'cyber-kit';
 import { GAME_ID, ADS, TRIAL, BOARDS } from './config.js';
-import './strings.js';
+import './strings.js?v=0.2.0b';
 import { boardForStage, starsFor } from './logic.js';
 import { View } from './view.js';
 import { SortAudio } from './audio.js';

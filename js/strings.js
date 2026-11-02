@@ -3,7 +3,7 @@ import { i18n } from 'cyber-kit';
 i18n.add({
   'doc.title': ['霓虹歸位', 'NEON SORT'],
   title: ['霓虹歸位', 'NEON SORT'],
-  titleEn: ['NEON SORT', 'NEON SORT'],
+  titleEn: ['NEON SORT', '霓虹歸位'],
   kicker: ['NEON KOWLOON · DATA SORT', 'NEON KOWLOON · DATA SORT'],
   tagline: ['點管拎起 · 堆疊消除 · 通勤解謎', 'Tap pipes · stack-clear · commute puzzle'],
   play: ['開始解謎', 'PLAY'],
@@ -22,7 +22,7 @@ i18n.add({
   restart: ['重來', 'RESTART'],
   restartS: ['RESET', 'RESET'],
   paused: ['已暫停', 'PAUSED'],
-  pausedS: ['PAUSED', 'PAUSED'],
+  pausedS: ['PAUSED', '已暫停'],
   resume: ['繼續', 'RESUME'],
   resumeS: ['BACK', 'BACK'],
   quit: ['返主畫面', 'MENU'],

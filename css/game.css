@@ -39,3 +39,6 @@ html, body { margin: 0; height: 100%; background: #05010f; overflow: hidden; tou
   font-size: 13px; pointer-events: none; opacity: 0; transition: opacity .2s;
 }
 .hint-toast.show { opacity: 1; }
+
+/* EN mode shows the Chinese name as the subtitle; Orbitron has no CJK glyphs. */
+html[data-lang="en"] .title-en { font-family: var(--font-zh); letter-spacing: 2px; }

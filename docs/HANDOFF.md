@@ -3,7 +3,7 @@
 > Brief state for the next AI. Full series rules: `fung2222/cyber-arcade` (`AGENT_HANDOFF.md` / `docs/ARCADE-HANDOFF.md`).  
 > **Contact style (Roy):** 解釋用 zh-HK（廣東話都睇得明）；code／路徑／commits 用英文。UI：**zh-HK 先行** + EN under.
 
-**Status:** **v0.2 polish** · kit **v0.3.16** · CYBER ARCADE tier **Silver** · `games.json` status **wip**  
+**Status:** **v0.2 polish** · kit **v0.3.19** · CYBER ARCADE tier **Silver** · `games.json` status **wip**
 **HEAD:** `77536f0` (`77536f053443a93bf7de5d8964755fb899360164`) · 2026-10-18 HKT  
 **Live:** https://fung2222.github.io/neon-sort/ · `?demo=1` · trial `?hub=1&trial=1`  
 **Repo:** https://github.com/fung2222/neon-sort
@@ -16,7 +16,7 @@
 - Undo/restart polish; win stars + particle juice; howto updated.
 - Trial: locks stages **> 5** when `trial=1`; endless score gate `5000` (`js/config.js` `TRIAL`).
 - Must call **`stage.render` every frame** (black-canvas bug fixed in `16c8d57`).
-- Home: kit **menu-home** (house / book / gear); bilingual howto + settings.
+- Home: kit **menu-home** (house / book / gear); bilingual howto + settings. EN mode shows the Chinese name (`霓虹歸位`) as the title subtitle, not a duplicate `NEON SORT`; pause uses the same bilingual pair.
 - Ads: `naturalBreak` on board-clear when `ads=1`.
 
 ## SHA timeline

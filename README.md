@@ -11,7 +11,7 @@
 繁體中文（香港）+ English · `localStorage cyber.lang` · `?lang=en|zh`
 
 ## 技術 Tech
-Three.js r169 + [cyber-kit](https://github.com/fung2222/cyber-kit) **v0.3.16**（`vendor/cyber-kit/`），純 ES modules，冇 build step。
+Three.js r169 + [cyber-kit](https://github.com/fung2222/cyber-kit) **v0.3.19**（`vendor/cyber-kit/`），純 ES modules，冇 build step。
 
 ## CYBER ARCADE
 屬於 [CYBER ARCADE](https://github.com/fung2222/cyber-arcade) 系列。建議級別 **Silver**。暫未包裝 Capacitor。
