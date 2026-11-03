@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import {
   i18n, t, flags, createStore, createStage, ThemeController, NeonCity, CyberUI, Platform,
-  createAds, readHub, returnToHub as kitReturnToHub, shouldShowArcadeMenu, Particles,
+  createAds, readHub, returnToHub as kitReturnToHub, shouldShowArcadeMenu, Particles, bindStartLoading,
 } from 'cyber-kit';
 import { GAME_ID, ADS, TRIAL, BOARDS } from './config.js';
 import './strings.js?v=0.2.0b';
@@ -11,6 +11,7 @@ import { View } from './view.js';
 import { SortAudio } from './audio.js';
 
 const $ = (id) => document.getElementById(id);
+bindStartLoading(['#btn-endless']);
 const HUB = readHub(location.search);
 // normalize ads for createAds / interstitial gate (kit readHub.ads is boolean)
 const ADS_ON = HUB.ads === true || HUB.ads === '1' || (!HUB.fromHub && (flags.adsim || Platform.isNative));
